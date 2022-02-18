@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website</title>
+    <meta name="google-signin-client_id"
+        content="453452392047-0pfvn1gnuclf98b1k9n6e92gvtec4o53.apps.googleusercontent.com" />
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton"></script>
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log("Name: " + profile.getName());
+            console.log("Image URL: " + profile.getImageUrl());
+            console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
+            const user = document.getElementsByClassName("user")[0];
+            debugger;
+            const nameHeader = document.createElement("h2");
+            const nameNode = document.createTextNode(profile.getName());
+            const imgNode = document.createElement("img");
+            imgNode.setAttribute("src", profile.getImageUrl());
+            imgNode.setAttribute("class", "user-img");
+            nameHeader.appendChild(nameNode);
+            user.appendChild(nameHeader);
+            user.appendChild(imgNode);
+        }
+
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                console.log("User signed out.");
+            });
+        }
+
+        function isSignedIn() {
+            return gapi.auth2.getAuthInstance().isSignedIn.get();
+        }
+
+        function onSuccess(googleUser) {
+            console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+            // remove sign in, replace with sign out
+            const signInButton = document.querySelector('#g-signin2');
+            signInButton.remove()
+            mountSignOut()
+        }
+
+        function mountSignOut() {
+            const signOutNode = document.createElement("a");
+
+            signOutNode.setAttribute('id', 'g-signout');
+            signOutNode.setAttribute('href', '#');
+            signOutNode.setAttribute('onclick', 'signOut()');
+            signOutNode.innerHTML = "Sign out";
+
+            const authParent = document.querySelector('.authentication');
+            authParent.appendChild(signOutNode)
+        }
+
+        // < !-- < div id = "g-signin2" data - onsuccess="onSignIn" ></div > -->
+        function mountSignIn() {
+            const signInNode = document.createElement("div");
+
+            signInNode.setAttribute('id', 'g-signin2');
+            signInNode.setAttribute('data-onsuccess', 'onSignIn');
+
+            const authParent = document.querySelector('.authentication');
+            authParent.appendChild(signInNode)
+        }
+
+        function initialize() {
+            debugger;
+            const signedIn = isSignedIn();
+            if (signedIn) {
+                mountSignOut()
+            } else {
+                mountSignIn()
+            }
+        }
+
+
+        // <a id="g-signout" href="#" onclick="signOut();">Sign out</a>
+        function onFailure(error) {
+            console.log(error);
+        }
+        function renderButton() {
+
+            gapi.signin2.render('g-signin2', {
+                'scope': 'profile email',
+                'width': 240,
+                'height': 50,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': onSuccess,
+                'onfailure': onFailure,
+            })
+            initialize()
+        };
+
+    </script>
+
+
+</head>
+
+<body>
+    <!-- <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '967229780834229',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v13.0'
+            });
+        };
+    </script> -->
+    <!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script> -->
+
+    <div class="authentication" on="initialize()"></div>
+    <!-- <div id="g-signin2" data-onsuccess="onSignIn"></div> -->
+
+    <div class="user"></div>
+
+    <template>
+        <div class="user">
+            <h2 class="name"></h2>
+            <img class="profile-image" src="">
+        </div>
+    </template>
+</body>
+
+</html>
