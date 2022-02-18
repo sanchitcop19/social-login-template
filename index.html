@@ -10,6 +10,14 @@
         content="453452392047-0pfvn1gnuclf98b1k9n6e92gvtec4o53.apps.googleusercontent.com" />
     <script src="https://apis.google.com/js/platform.js?onload=renderButton"></script>
     <script>
+        gapi.load('auth2', function () {
+            auth2 = gapi.auth2.init({
+                client_id: '453452392047-0pfvn1gnuclf98b1k9n6e92gvtec4o53.apps.googleusercontent.com'
+            });
+            auth2.attachClickHandler('g-signin2', {}, onSuccess, onFailure);
+
+            auth2.isSignedIn.listen(signinChanged);
+        })
         function onSignIn(googleUser) {
             var profile = googleUser.getBasicProfile();
             console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
@@ -27,7 +35,9 @@
             user.appendChild(nameHeader);
             user.appendChild(imgNode);
         }
-
+        function signinChanged(val) {
+            console.log(val);
+        }
         function signOut() {
             var auth2 = gapi.auth2.getAuthInstance();
             auth2.signOut().then(function () {
@@ -118,7 +128,7 @@
     <!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script> -->
 
     <div class="authentication" on="initialize()"></div>
-    <!-- <div id="g-signin2" data-onsuccess="onSignIn"></div> -->
+    <div id="g-signin2" data-onsuccess="onSignIn"></div>
 
     <div class="user"></div>
 
